@@ -24,7 +24,7 @@ A aplicação permite:
 
 O vídeo demonstrando o funcionamento completo do dashboard pode ser acessado no link abaixo:
 
-🔗 **YouTube:** [inserir link do vídeo aqui]
+🔗 **YouTube:** https://youtu.be/NqwNAvFQA5A
 
 ---
 
