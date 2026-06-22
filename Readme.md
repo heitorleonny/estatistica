@@ -16,7 +16,7 @@ A aplicação permite:
 
 ## 👥 Integrantes
 
-* *Heitor Leonny Lima Pereira**
+* **Heitor Leonny Lima Pereira**
 * **Lucas Gabriel Gomes dos Passos**
 ---
 
