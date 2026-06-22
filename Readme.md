@@ -13,16 +13,11 @@ A aplicação permite:
 * **Intervalo de confiança normal para a média populacional**;
 * **Regressão linear simples** entre duas variáveis quantitativas.
 
----
 
 ## 👥 Integrantes
 
-* **Nome 1**
-* **Nome 2**
-* **Nome 3**
-
-> Substitua pelos nomes completos dos integrantes do trio.
-
+* *Heitor Leonny Lima Pereira**
+* **Lucas Gabriel Gomes dos Passos**
 ---
 
 ## 🎥 Vídeo de demonstração
@@ -35,7 +30,7 @@ O vídeo demonstrando o funcionamento completo do dashboard pode ser acessado no
 
 ## 🔗 Repositório do projeto
 
-🔗 **GitHub:** [inserir link do repositório aqui]
+🔗 **GitHub:** https://github.com/heitorleonny/estatistica
 
 ---
 
