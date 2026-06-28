@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import stats
+import re
 
 # ─────────────────────────── UI ────────────────────────────
 # Os selects de variável são renderizados dinamicamente no server
@@ -140,6 +141,29 @@ app_ui = ui.page_sidebar(
 
 def server(input: Inputs, output: Outputs, session: Session):
 
+    def _coerce_numeric_series(series: pd.Series):
+        if pd.api.types.is_datetime64_any_dtype(series):
+            return None
+
+        if pd.api.types.is_numeric_dtype(series):
+            return pd.to_numeric(series, errors="coerce")
+
+        pattern = re.compile(r"[-+]?\d+(?:[\.,]\d+)?")
+        numeric_values = []
+        matched_rows = 0
+
+        for value in series.astype(str):
+            matches = pattern.findall(value)
+            if len(matches) == 1:
+                matched_rows += 1
+                numeric_values.append(float(matches[0].replace(",", ".")))
+            else:
+                numeric_values.append(np.nan)
+
+        if len(series) > 0 and matched_rows / len(series) >= 0.5:
+            return pd.Series(numeric_values, index=series.index)
+        return None
+
     # ── Carregamento e detecção de colunas ──────────────────
 
     @reactive.calc
@@ -169,13 +193,8 @@ def server(input: Inputs, output: Outputs, session: Session):
             return []
         result = []
         for col in df.columns:
-            if pd.api.types.is_numeric_dtype(df[col]):
+            if _coerce_numeric_series(df[col]) is not None:
                 result.append(col)
-            else:
-                # tenta converter (captura colunas como "5.0" em texto)
-                converted = pd.to_numeric(df[col], errors="coerce")
-                if converted.notna().mean() >= 0.5:
-                    result.append(col)
         return result
 
     # ── Status do arquivo ────────────────────────────────────
@@ -238,7 +257,10 @@ def server(input: Inputs, output: Outputs, session: Session):
             return None
         if not var or var not in df.columns:
             return None
-        series = pd.to_numeric(df[var], errors="coerce").dropna()
+        converted = _coerce_numeric_series(df[var])
+        if converted is None:
+            return None
+        series = converted.dropna()
         return series if len(series) > 0 else None
 
     # ── Tab 1: Análise Descritiva ────────────────────────────
@@ -443,8 +465,8 @@ def server(input: Inputs, output: Outputs, session: Session):
         if y_var == x_var:
             return None
         sub = pd.DataFrame({
-            x_var: pd.to_numeric(df[x_var], errors="coerce"),
-            y_var: pd.to_numeric(df[y_var], errors="coerce"),
+            x_var: _coerce_numeric_series(df[x_var]),
+            y_var: _coerce_numeric_series(df[y_var]),
         }).dropna()
         return (sub, x_var, y_var) if len(sub) >= 3 else None
 
